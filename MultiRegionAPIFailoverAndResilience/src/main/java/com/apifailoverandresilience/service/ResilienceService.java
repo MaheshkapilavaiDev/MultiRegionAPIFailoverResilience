@@ -2,7 +2,9 @@ package com.apifailoverandresilience.service;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.apifailoverandresilience.entity.Region;
@@ -17,15 +19,15 @@ import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 @Service
 public class ResilienceService {
 
-    private final FailoverService failoverService;
+	@Autowired
+    private  FailoverService failoverService;
+	
+	@Autowired
+    private Executor taskExecutor;
 
-    public ResilienceService(FailoverService failoverService) {
-        this.failoverService = failoverService;
-    }
-
-    /**
-     * Main Business API
-     */
+   
+     //Main Business API
+     
     @Retry(name = "regionService", fallbackMethod = "fallback")
     @CircuitBreaker(name = "regionService", fallbackMethod = "fallback")
     @RateLimiter(name = "regionService")
@@ -45,7 +47,7 @@ public class ResilienceService {
 
             // Simulate Network Delay
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -61,7 +63,7 @@ public class ResilienceService {
             return "Successfully Connected to "
                     + activeRegion.getRegionName()
                     + " Region";
-        });
+        }, taskExecutor);
 
     }
 

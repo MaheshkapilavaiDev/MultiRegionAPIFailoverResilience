@@ -50,14 +50,14 @@ public class SecurityConfig {
 							    "/api-docs/**", "/actuator/**").permitAll()
 						.requestMatchers("/admin/**",
 								"/regions/**",
-					            "/failover/**",
-					            "/failback/**",
+								"/api/resilience/**",
+					            "/api/failover/**",
+					           // "/api/failback/**",
 					            "/metrics/**",
 					            "/api/cache/sync",
 					            "/api/cache/**",
 					            "/audit-logs/**",
 					            "/system/**",
-					            "/resilience/**",
 					            "/api/monitoring/**",
 					            "/api/health/**"
 					            ).hasRole("ADMIN")

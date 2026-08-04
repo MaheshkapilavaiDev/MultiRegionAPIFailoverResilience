@@ -14,7 +14,7 @@ import com.apifailoverandresilience.service.FailoverService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/failover")
 public class FailoverController {
 
 	@Autowired

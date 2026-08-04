@@ -1,73 +1,82 @@
 package com.apifailoverandresilience.controller;
 
-import java.util.concurrent.CompletableFuture;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.apifailoverandresilience.service.ResilienceService;
 
-
 @RestController
-@RequestMapping("/resilience")
+@RequestMapping("/api/resilience")
 public class ResilienceController {
 
 	@Autowired
-    private  ResilienceService resilienceService;
+	private ResilienceService resilienceService;
 
-    
+	// Test All Resilience Features
+	/*
+	 * @GetMapping("/test") public CompletableFuture<ResponseEntity<String>>
+	 * testResilience() {
+	 * 
+	 * Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	 * 
+	 * System.out.println("User = " + auth.getName());
+	 * System.out.println("Authorities = " + auth.getAuthorities());
+	 * 
+	 * return resilienceService.callActiveRegion() .thenApply(ResponseEntity::ok); }
+	 */
 
-    // Test All Resilience Features
-    @GetMapping("/test")
-    public CompletableFuture<ResponseEntity<String>> testResilience() {
+	@GetMapping("/test")
+	public ResponseEntity<String> testResilience() throws Exception {
 
-        return resilienceService.callActiveRegion()
-                .thenApply(ResponseEntity::ok);
-    }
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-    @GetMapping("/retry")
-    public CompletableFuture<ResponseEntity<String>> retry() {
+		System.out.println("User = " + auth.getName());
+		System.out.println("Authorities = " + auth.getAuthorities());
 
-        return resilienceService.retryExample()
-                .thenApply(ResponseEntity::ok);
-    }
+		String result = resilienceService.callActiveRegion().get();
 
-    @GetMapping("/circuit-breaker")
-    public CompletableFuture<ResponseEntity<String>> circuitBreaker() {
+		return ResponseEntity.ok(result);
+	}
 
-        return resilienceService.circuitBreakerExample()
-                .thenApply(ResponseEntity::ok);
-    }
+	@GetMapping("/retry")
+	public ResponseEntity<String> retry() throws Exception {
 
-    @GetMapping("/rate-limiter")
-    public CompletableFuture<ResponseEntity<String>> rateLimiter() {
+		return ResponseEntity.ok(resilienceService.retryExample().get());
+	}
 
-        return resilienceService.rateLimiterExample()
-                .thenApply(ResponseEntity::ok);
-    }
+	@GetMapping("/circuit-breaker")
+	public ResponseEntity<String> circuitBreaker() throws Exception {
 
-    @GetMapping("/bulkhead")
-    public CompletableFuture<ResponseEntity<String>> bulkhead() {
+		return ResponseEntity.ok(resilienceService.circuitBreakerExample().get());
+	}
 
-        return resilienceService.bulkheadExample()
-                .thenApply(ResponseEntity::ok);
-    }
+	@GetMapping("/rate-limiter")
+	public ResponseEntity<String> rateLimiter() throws Exception {
 
-    @GetMapping("/time-limiter")
-    public CompletableFuture<ResponseEntity<String>> timeLimiter() {
+		return ResponseEntity.ok(resilienceService.rateLimiterExample().get());
+	}
 
-        return resilienceService.simulateSlowService()
-                .thenApply(ResponseEntity::ok);
-    }
+	@GetMapping("/bulkhead")
+	public ResponseEntity<String> bulkhead() throws Exception {
 
-    @GetMapping("/active-region")
-    public ResponseEntity<String> activeRegion() {
+		return ResponseEntity.ok(resilienceService.bulkheadExample().get());
+	}
 
-        return ResponseEntity.ok(
-                resilienceService.getActiveRegionInfo());
-    }
+	@GetMapping("/time-limiter")
+	public ResponseEntity<String> timeLimiter() throws Exception {
+
+		return ResponseEntity.ok(resilienceService.simulateSlowService().get());
+	}
+
+	@GetMapping("/active-region")
+	public ResponseEntity<String> activeRegion() {
+
+		return ResponseEntity.ok(resilienceService.getActiveRegionInfo());
+	}
 
 }

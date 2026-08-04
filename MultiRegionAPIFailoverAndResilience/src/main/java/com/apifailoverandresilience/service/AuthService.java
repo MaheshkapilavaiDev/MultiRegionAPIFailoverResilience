@@ -46,6 +46,9 @@ public class AuthService {
 	
 	public MessageResponse register(RegisterRequest request) {
 
+		return monitoringService.recordResponseTime(() -> {
+			
+		
 		if (userRepository.existsByEmail(request.getEmail())) {
 			throw new RuntimeException("Email already exists");
 		}
@@ -75,6 +78,7 @@ public class AuthService {
 		        "SUCCESS");
 
 		return new MessageResponse("User Registered Successfully");
+	});
 	}
 
 	public AuthResponse login(LoginRequest request) {
